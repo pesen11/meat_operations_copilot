@@ -1,0 +1,20 @@
+sku,product_name,source_primal,unit,price_per_kg,avg_pack_weight_kg,yield_pct,waste_pct,cut_plan_share,labor_basis,processing_unit_weight_kg,reference_box_weight_kg,cutting_minutes_per_kg_primal,cutting_minutes_per_kg_product,primal_cost_per_kg,velocity_tier,supplier,data_source
+tomahawk-steak,Tomahawk Steak,6X6 Frenched,each,54.99,1.75,0.89,0.11,1.0,per_box,25.0,25.0,0.32,0.3596,32.5,low,Northlake Beef Co.,real
+blade-thin-sliced,Thinly Sliced Blades,Blade Eyes,kg,24.99,2.0,0.84,0.16,0.65,per_box,30.0,30.0,0.5,0.5952,12.2,best,Northlake Beef Co.,real
+chuck-roast,Chuck Roast,Blade Eyes,kg,23.49,2.2,0.88,0.12,0.35,per_box,30.0,30.0,0.5,0.5682,12.2,best,Northlake Beef Co.,real
+ribeye-steak-bnls,Boneless Ribeye Steak,Bone-in Ribeye,kg,49.99,1.6,0.67,0.33,1.0,per_box,30.0,30.0,0.6667,0.995,22.25,medium,Northlake Beef Co.,real
+brisket-whole-trimmed,Beef Brisket Whole Trimmed,Brisket,kg,18.99,4.5,0.85,0.15,1.0,per_box,40.0,40.0,1.0,1.1765,9.1,medium,Northlake Beef Co.,synthetic
+short-ribs-simmering,Simmering Short Ribs,Chuck Flat,kg,44.99,1.2,0.82,0.18,1.0,per_box,35.0,35.0,0.5714,0.6969,21.55,best,Northlake Beef Co.,real
+ground-beef-medium,Ground Beef Medium,Chuck Primal,kg,13.99,0.5,0.92,0.08,1.0,per_box,35.0,35.0,0.5143,0.559,7.25,best,Northlake Beef Co.,synthetic
+flank-steak,Flank Steak,Flank,kg,35.99,0.8,0.8,0.2,1.0,per_box,20.0,20.0,0.5,0.625,16.8,low,Northlake Beef Co.,real
+skirt-steak,Skirt Steak,Plate,kg,38.99,0.6,0.7,0.3,1.0,per_box,15.0,15.0,0.8,1.1429,18.1,low,Northlake Beef Co.,synthetic
+pork-belly-thin-cut,Thinly Cut Pork Bellies,Pork Belly,kg,12.99,2.5,0.9,0.1,1.0,per_box,25.0,25.0,0.28,0.3111,6.6,best,Riverside Pork Supply,real
+pork-chops-bnls,Boneless Pork Chops,Pork Loin,kg,14.99,0.5,0.85,0.15,1.0,per_box,22.0,22.0,0.5455,0.6417,7.2,best,Riverside Pork Supply,synthetic
+pulled-pork-roast,Pulled Pork Roast (Boston Butt),Pork Shoulder,kg,10.99,2.0,0.9,0.1,1.0,per_box,30.0,30.0,0.3333,0.3704,5.6,medium,Riverside Pork Supply,synthetic
+beef-stew-meat,Beef Stew Meat,Round,kg,16.99,1.0,0.8,0.2,0.45,per_box,30.0,30.0,0.4667,0.5833,9.05,medium,Northlake Beef Co.,synthetic
+eye-of-round-roast,Eye of Round Roast,Round,kg,19.99,1.8,0.9,0.1,0.55,per_box,30.0,30.0,0.4,0.4444,9.05,medium,Northlake Beef Co.,synthetic
+osso-buco,Osso Buco Cross-Cut Shank,Shank,kg,17.99,0.7,0.85,0.15,1.0,per_box,20.0,20.0,0.75,0.8824,8.6,low,Northlake Beef Co.,synthetic
+striploin-steak-bnls,Striploin Steak Boneless,Striploin Whole,kg,42.99,1.6,0.78,0.22,1.0,per_box,35.0,35.0,0.6571,0.8425,22.25,medium,Northlake Beef Co.,real
+tenderloin-steak,Tenderloin Steak,Tenderloin,kg,65.99,0.8,0.77,0.23,1.0,per_piece,4.5,40.0,1.1111,1.443,33.75,low,Northlake Beef Co.,real
+top-sirloin-steak-cr,Top Sirloin Steak Cap Removed,Top Sirloin Butt,kg,33.99,1.4,0.84,0.16,1.0,per_box,35.0,35.0,0.4286,0.5102,16.65,medium,Northlake Beef Co.,real
+wagyu-flatiron-thin,Wagyu Flat Iron Thin Sliced,Wagyu Flat Iron,kg,65.99,0.8,0.83,0.17,1.0,per_box,13.0,13.0,0.6154,0.7414,36.35,low,Kuroge Specialty Imports,real

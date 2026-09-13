@@ -1,0 +1,18 @@
+source_primal,role,minutes_per_kg_primal,paths,data_source
+6X6 Frenched,cutter,0.32,tomahawk-steak,synthetic
+Blade Eyes,cutter,0.5,chuck-roast|blade-thin-sliced,synthetic
+Bone-in Ribeye,cutter,0.6667,ribeye-steak-bnls,synthetic
+Brisket,cutter,1.0,brisket-whole-trimmed,synthetic
+Chuck Flat,cutter,0.5714,short-ribs-simmering,synthetic
+Chuck Primal,cutter,0.5143,ground-beef-medium,synthetic
+Flank,cutter,0.5,flank-steak,synthetic
+Plate,cutter,0.8,skirt-steak,synthetic
+Pork Belly,cutter,0.28,pork-belly-thin-cut,synthetic
+Pork Loin,cutter,0.5455,pork-chops-bnls,synthetic
+Pork Shoulder,cutter,0.3333,pulled-pork-roast,synthetic
+Round,cutter,0.43,eye-of-round-roast|beef-stew-meat,synthetic
+Shank,cutter,0.75,osso-buco,synthetic
+Striploin Whole,cutter,0.6571,striploin-steak-bnls,synthetic
+Tenderloin,cutter,1.1111,tenderloin-steak,synthetic
+Top Sirloin Butt,cutter,0.4286,top-sirloin-steak-cr,synthetic
+Wagyu Flat Iron,cutter,0.6154,wagyu-flatiron-thin,synthetic

@@ -1,0 +1,33 @@
+# --- secrets: never commit ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# --- python ---
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+venv/
+mt_venv/
+.venv/
+
+# --- node / next ---
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+.vercel/
+
+# --- build + generated artefacts ---
+# The vector index self-builds from data/sops/ on first request
+# (LocalVectorStore.ensure_loaded -> build), so it need not be committed.
+rag/index/sop_index.json
+rag/index/sop_index.npy
+rag/cache/
+
+# NOTE: rag/index/tuned_params.json is deliberately NOT ignored. It is the
+# output of `python -m rag.eval.tune` and cannot be regenerated at runtime;
+# without it the offline path silently falls back to untuned defaults.

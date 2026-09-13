@@ -1,0 +1,33 @@
+# Render blueprint for the FastAPI backend.
+#
+# Why a persistent container and not serverless: /simulate/stream is a
+# long-lived SSE response driven by a SYNCHRONOUS graph.stream() on a worker
+# thread (see CLAUDE.md step 5 - interrupt() cannot run under astream on
+# Python < 3.11). Serverless execution limits would cut the stream and lose
+# the approval interrupt between /simulate/stream and /approve.
+services:
+  - type: web
+    name: ops-copilot-api
+    runtime: python
+    plan: free
+    region: oregon
+    healthCheckPath: /health
+    # The postgres extra pulls psycopg AND langgraph-checkpoint-postgres.
+    # Without the latter, default_checkpointer() swallows the ImportError and
+    # silently returns InMemorySaver - /health reports which one is live.
+    buildCommand: pip install -e ".[postgres]"
+    startCommand: uvicorn api.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      # CI covers 3.10 and 3.12; 3.12 is the faster of the two.
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      # Neon pooled connection string. Set in the Render dashboard, never here.
+      - key: DATABASE_URL
+        sync: false
+      # Comma-separated Vercel origins allowed to call this API.
+      - key: OPS_COPILOT_CORS_ORIGINS
+        sync: false
+      # Deliberately NOT set: no ANTHROPIC_API_KEY. The service runs the
+      # deterministic offline path (template narration, lexical reranker,
+      # extractive SOP answers) so a public endpoint cannot spend credits.
+      # Add the key only once access is restricted.

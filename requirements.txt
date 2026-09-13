@@ -1,0 +1,17 @@
+pydantic>=2.0
+numpy
+pandas
+holidays
+pytest
+langchain-core
+langgraph
+anthropic
+fastapi
+uvicorn[standard]
+sse-starlette
+python-dotenv
+pyyaml
+# Production (Postgres/Neon). Installed on Render via `pip install -e ".[postgres]"`.
+# PostgresSaver ships separately from langgraph core - see pyproject.toml.
+psycopg[binary]>=3.1
+langgraph-checkpoint-postgres>=2.0

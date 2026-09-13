@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Force the deterministic paths. The whole suite is designed to run with no
+  # credentials: no number in this system comes from the model, so offline
+  # runs verify the same arithmetic the live system serves. It also means CI
+  # costs nothing and cannot flake on an API outage.
+  OPS_COPILOT_LLM: stub
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.10 is the floor the project supports. It is in the matrix
+        # deliberately: LangGraph's interrupt() behaves differently there
+        # (see agents/nodes.py human_approval), so dropping 3.10 from CI
+        # would hide a real, version-specific failure in the approval step.
+        python-version: ["3.10", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Regenerate synthetic history
+        # Rebuilt rather than committed-and-trusted: the generator is seeded,
+        # so this also verifies the data is reproducible from the code.
+        run: python data/generate_history.py
+
+      - name: Check catalog consistency
+        run: python data/catalog.py
+
+      - name: Build the SOP index
+        run: python -m rag.index build
+
+      - name: Unit tests
+        run: pytest tests/ -q --junitxml=pytest-report.xml
+
+      - name: Evaluation suite
+        # Exit 2 = the "LLM never computes numbers" invariant was violated, or
+        # the RAG layer answered a question the corpus does not cover.
+        # Exit 1 = a quality threshold drifted. Both fail the build.
+        run: python -m evals.run_all --json eval-report.json
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-py${{ matrix.python-version }}
+          path: |
+            pytest-report.xml
+            eval-report.json
+          if-no-files-found: ignore
+
+  rag-thresholds:
+    # The tuned thresholds in rag/index/tuned_params.json are generated, not
+    # hand-written. This job re-runs the sweep and fails if the committed
+    # values no longer match what the eval set implies - which is how a
+    # corpus or chunker change that silently invalidates them gets caught.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+      - run: python data/generate_history.py
+      - run: python -m rag.index build
+      - name: Re-run threshold sweep
+        run: python -m rag.eval.tune
+      - name: Report retrieval metrics
+        run: python -m rag.eval.run_eval --retrieval

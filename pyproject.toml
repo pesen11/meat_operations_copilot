@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ops-copilot"
+version = "0.1.0"
+description = "Meat-cutting operations intelligence copilot"
+requires-python = ">=3.10"
+dependencies = [
+    "pydantic>=2.0",
+    "numpy",
+    "pandas",
+    "holidays",
+    "pytest",
+    "langchain-core",
+    "langgraph",
+    "anthropic",
+    "fastapi",
+    "uvicorn[standard]",
+    "sse-starlette",
+    "python-dotenv",
+    "pyyaml",
+]
+
+[project.optional-dependencies]
+# Postgres/Neon + pgvector backing store. Without these the RAG layer falls
+# back to the local file-backed vector store (see rag/vectorstore/local.py).
+postgres = ["psycopg[binary]>=3.1", "pgvector",
+            # PostgresSaver lives here, NOT in langgraph core. Without it
+            # default_checkpointer() swallows the ImportError and silently
+            # returns InMemorySaver, so a deployed backend loses the
+            # approval interrupt on every restart with no error anywhere.
+            "langgraph-checkpoint-postgres>=2.0"]
+# Ragas is heavy and pulls its own LangChain/datasets stack. The eval suite
+# runs without it (built-in Claude judge); installing this extra makes
+# evals/ragas_adapter.py use real Ragas metrics instead.
+eval = ["ragas", "datasets"]
+dev = ["pytest", "pytest-asyncio", "httpx"]
+
+[tool.setuptools]
+packages = ["models", "data", "simulation", "agents", "rag", "rag.vectorstore", "rag.eval", "api", "evals", "db"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+markers = [
+    "live_llm: test requires ANTHROPIC_API_KEY and makes real API calls (deselect with '-m \"not live_llm\"')",
+]

@@ -1,0 +1,13 @@
+{
+  "min_relevance": 0.25,
+  "relative_floor": 0.8,
+  "rerank_top_n": 4,
+  "extractive_min_relevance": 0.0,
+  "oov_decline_threshold": 0.25,
+  "semantic_threshold": 0.6,
+  "embedder": "tfidf",
+  "reranker": "lexical",
+  "source": "tuned",
+  "tuned_at": "2026-09-11T21:43:10+00:00",
+  "notes": "NOT separable at this embedder: some distinct questions score as similar as some paraphrases do. Threshold set above the worst observed false pair, so paraphrase cache hits are sacrificed to avoid serving a wrong cached answer. Sweep suggested 0.335, raised to the 0.6 safety floor: a value that low is not supportable from 29 queries and would false-hit on unseen traffic."
+}
