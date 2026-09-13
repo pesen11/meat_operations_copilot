@@ -31,3 +31,4 @@ rag/cache/
 # NOTE: rag/index/tuned_params.json is deliberately NOT ignored. It is the
 # output of `python -m rag.eval.tune` and cannot be regenerated at runtime;
 # without it the offline path silently falls back to untuned defaults.
+.neon

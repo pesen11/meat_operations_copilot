@@ -113,19 +113,59 @@ def build_graph(checkpointer: Any = None):
     return builder.compile(checkpointer=checkpointer or default_checkpointer())
 
 
+# Why the Postgres checkpointer failed, if it did. A silent fall back to
+# memory loses the approval interrupt on every restart while the service still
+# reports healthy, so the reason is kept and surfaced by /health.
+CHECKPOINTER_FALLBACK_REASON: Optional[str] = None
+
+# The live connection is held at module scope ON PURPOSE - see below.
+_PG_CONN = None
+
+
 def default_checkpointer():
     """Postgres-backed when DATABASE_URL is set and langgraph-checkpoint-postgres
     is installed; in-memory otherwise. In-memory means sessions do not survive
-    a restart - fine for local use, not for a deployed backend."""
+    a restart - fine for local use, not for a deployed backend.
+
+    Two things here are load-bearing and were both real bugs:
+
+    1. **The connection is created explicitly and held in a module global.**
+       The obvious `PostgresSaver.from_conn_string(url).__enter__()` looks
+       right and fails: `from_conn_string` is a @contextmanager, so the
+       context manager returned by the call is a TEMPORARY with no remaining
+       reference once `__enter__()` returns. CPython collects it immediately,
+       throws GeneratorExit into the suspended generator, that unwinds its
+       internal `with psycopg.connect(...)`, and the connection is closed
+       before `setup()` ever runs - "psycopg.OperationalError: the connection
+       is closed". Holding the connection ourselves removes the hazard.
+
+    2. **`prepare_threshold=0`.** Neon's POOLED endpoint is PgBouncer in
+       transaction mode, which does not support prepared statements, while
+       psycopg3 starts preparing a statement after a few executions. Left at
+       the default this works in testing and then fails under repeat traffic.
+    """
+    global CHECKPOINTER_FALLBACK_REASON, _PG_CONN
     url = os.getenv("DATABASE_URL")
     if url:
         try:
+            import psycopg  # noqa: PLC0415
+            from psycopg.rows import dict_row  # noqa: PLC0415
             from langgraph.checkpoint.postgres import PostgresSaver  # noqa: PLC0415
-            saver = PostgresSaver.from_conn_string(url).__enter__()
+
+            _PG_CONN = psycopg.connect(
+                url, autocommit=True, prepare_threshold=0, row_factory=dict_row)
+            saver = PostgresSaver(_PG_CONN)
             saver.setup()
+            CHECKPOINTER_FALLBACK_REASON = None
             return saver
-        except Exception:
-            pass  # fall through to memory rather than failing to start
+        except Exception as exc:
+            # Still fall through rather than refusing to start - a degraded
+            # service beats no service - but do not do it silently.
+            CHECKPOINTER_FALLBACK_REASON = f"{type(exc).__name__}: {exc}"
+            _PG_CONN = None
+    elif not url:
+        CHECKPOINTER_FALLBACK_REASON = "DATABASE_URL is not set"
+
     from langgraph.checkpoint.memory import InMemorySaver
     return InMemorySaver()
 

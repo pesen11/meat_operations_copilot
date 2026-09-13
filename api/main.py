@@ -114,11 +114,14 @@ async def health() -> HealthResponse:
         saver = type(get_graph().checkpointer).__name__
     except Exception:
         saver = "unknown"
+    from agents import graph as _graph
+    saver_reason = _graph.CHECKPOINTER_FALLBACK_REASON
 
     return HealthResponse(
         status="ok",
         llm="live" if llm.is_live() else "offline",
         checkpointer=saver,
+        checkpointer_fallback_reason=saver_reason,
         vector_store=store_stats,
         data_backend=backend,
         rag_params=rag_params,

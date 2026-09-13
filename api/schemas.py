@@ -191,6 +191,8 @@ class HealthResponse(BaseModel):
     # the approval interrupt on restart without raising. A deployment must be
     # able to see that rather than discover it when /approve 404s.
     checkpointer: str = "unknown"
+    # Why Postgres was not used, when it was not. None means it is in use.
+    checkpointer_fallback_reason: Optional[str] = None
     vector_store: dict[str, Any]
     data_backend: str
     rag_params: dict[str, Any]
